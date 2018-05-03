@@ -122,9 +122,6 @@ namespace PathFind
         int dstX = fabs(nodeA.gridX - nodeB.gridX);
         int dstY = fabs(nodeA.gridY - nodeB.gridY);
 
-        if (dstX == 0) return dstY * 10;
-        if (dstY == 0) return dstX * 10;
-
         if (dstX > dstY)
             return 14 * dstY + 10 * (dstX - dstY);
         return 14 * dstX + 10 * (dstY - dstX);

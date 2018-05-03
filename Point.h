@@ -9,7 +9,6 @@ namespace PathFind
         Point();
         Point(int iX, int iY);
         Point(const Point& b);
-        ~Point();
 
         int GetHashCode();
 

@@ -21,10 +21,6 @@ namespace PathFind
         y = b.y;
     }
 
-    Point::~Point()
-    {
-    }
-
     int Point::GetHashCode()
     {
         return x ^ y;

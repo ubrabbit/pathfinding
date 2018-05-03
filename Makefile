@@ -9,7 +9,7 @@ all:	c_path clean
 c_path:	$(code_objects)
 	g++ $(code_objects) \
 	-shared \
-	${INCLUDE_PY} \
+	$(INCLUDE_PY) \
 	-o c_path.so
 
 %.o : %.cpp
