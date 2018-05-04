@@ -219,6 +219,7 @@ class CPainter(QtWidgets.QWidget):
             return
         try:
             iCost,pTuple=c_path.SeekPath( self.m_Grid.m_PosEntrance, self.m_Grid.m_PosExport )
+            #iCost,pTuple=c_path.SeekPathDebug( 10, self.m_Grid.m_PosEntrance, self.m_Grid.m_PosExport )
         except Exception as err:
             print("SeekPath error")
             debug_print()

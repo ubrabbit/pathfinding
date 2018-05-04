@@ -34,7 +34,7 @@ print("posList is ",posList)
 c_path.CreateMapByCost(10,10,posList)
 
 def test():
-    cost, result = c_path.SeekPath( (0,0), (8,7) )
+    cost, result = c_path.SeekPathDebug( 10, (0,0), (8,7) )
     pList=list(result)
     pos_list = []
     while pList:
