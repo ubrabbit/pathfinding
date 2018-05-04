@@ -47,10 +47,12 @@ namespace PathFind
             for(int i=0; i<size_pos; i++)
             {
                 tmpPos = PyList_GetItem(posList, i);
+                Py_INCREF(tmpPos);
                 int pos_x = PyLong_AsLong(PyTuple_GetItem(tmpPos,0));
                 int pos_y = PyLong_AsLong(PyTuple_GetItem(tmpPos,1));
                 long cost = PyLong_AsLong(PyTuple_GetItem(tmpPos,2));
                 tiles_costs[ pos_x*width + pos_y ] = (float)cost;
+                Py_DECREF(tmpPos);
             }
             Grid* grid = new Grid(width, height, tiles_costs);
             g_Map = grid;
@@ -78,9 +80,11 @@ namespace PathFind
             for(int i=0; i<size_pos; i++)
             {
                 tmpPos = PyList_GetItem(blockList, i);
+                Py_INCREF(tmpPos);
                 int pos_x = PyLong_AsLong(PyTuple_GetItem(tmpPos,0));
                 int pos_y = PyLong_AsLong(PyTuple_GetItem(tmpPos,1));
                 tiles_walkable[ pos_x*width + pos_y ] = false;
+                Py_DECREF(tmpPos);
             }
             Grid* grid = new Grid(width, height, tiles_walkable);
             g_Map = grid;
@@ -109,10 +113,12 @@ namespace PathFind
             for(int i=0; i<size_pos; i++)
             {
                 tmpPos = PyList_GetItem(posList, i);
+                Py_INCREF(tmpPos);
                 int pos_x = PyLong_AsLong(PyTuple_GetItem(tmpPos,0));
                 int pos_y = PyLong_AsLong(PyTuple_GetItem(tmpPos,1));
                 long cost = PyLong_AsLong(PyTuple_GetItem(tmpPos,2));
                 tiles_costs[ pos_x*width + pos_y ] = (float)cost;
+                Py_DECREF(tmpPos);
             }
             Grid* grid = new Grid(width, height, tiles_costs);
 
@@ -120,9 +126,11 @@ namespace PathFind
             for(int i=0; i<size_block; i++)
             {
                 tmpPos = PyList_GetItem(blockList,i);
+                Py_INCREF(tmpPos);
                 int pos_x = PyLong_AsLong(PyTuple_GetItem(tmpPos,0));
                 int pos_y = PyLong_AsLong(PyTuple_GetItem(tmpPos,1));
                 grid->SetNodeCost( pos_x, pos_y, 0xFFFF, false );
+                Py_DECREF(tmpPos);
             }
 
             g_Map = grid;
@@ -158,7 +166,6 @@ namespace PathFind
                 cost = PyLong_AsLong(PyTuple_GetItem(tmpPos,2));
                 able = PyLong_AsLong(PyTuple_GetItem(tmpPos,3));
                 walkable = true ? (able!=0) : false;
-
                 g_Map->SetNodeCost( pos_x, pos_y, cost, walkable );
             }
             return Py_BuildValue("i", 1);
