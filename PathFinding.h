@@ -25,7 +25,7 @@ namespace PathFind
 
     private:
         // internal function to find path, don't use this one from outside
-        static std::list<Node> _ImpFindPath(Grid grid, Point startPos, Point targetPos);
+        static std::list<Point> _ImpFindPath(Grid grid, Point startPos, Point targetPos);
         static int GetDistance(Node nodeA, Node nodeB);
     };
 

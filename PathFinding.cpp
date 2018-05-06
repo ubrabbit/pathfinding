@@ -23,15 +23,11 @@ namespace PathFind
         }
 
         // find path
-        list<Node> nodes_path = _ImpFindPath(grid, startPos, targetPos);
-        for( list<Node>::iterator iter=nodes_path.begin(); iter!=nodes_path.end(); iter++ )
-        {
-            ret.push_back( Point((*iter).gridX, (*iter).gridY) );
-        }
+        ret = _ImpFindPath(grid, startPos, targetPos);
         return ret;
     }
 
-    list<Node> Pathfinding::_ImpFindPath(Grid grid, Point startPos, Point targetPos)
+    list<Point> Pathfinding::_ImpFindPath(Grid grid, Point startPos, Point targetPos)
     {
             Node startNode = grid.GetNode(startPos.x, startPos.y);
             Node targetNode = grid.GetNode(targetPos.x, targetPos.y);
@@ -102,18 +98,18 @@ namespace PathFind
                 }
             }
 
-            list<Node> pathList;
+            list<Point> pointList;
             if ( is_find )
             {
                 Node tmpNode = targetNode;
                 while (tmpNode != startNode)
                 {
-                    pathList.push_back(tmpNode);
+                    pointList.push_back( Point(tmpNode.gridX, tmpNode.gridY) );
                     tmpNode = parentSet[tmpNode.gridX][tmpNode.gridY];
                 }
-                pathList.reverse();
+                pointList.reverse();
             }
-            return pathList;
+            return pointList;
     }
 
     int Pathfinding::GetDistance(Node nodeA, Node nodeB)
