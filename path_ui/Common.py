@@ -7,15 +7,18 @@ from logging.handlers import TimedRotatingFileHandler
 
 GridColorList=[
         "",
-        "#aaaaff","#00aa7f","#00aaff",
+        "#aaaaff","#00aa7f",
         "#aa55ff","#555500","#55557f",
         "#00007f","#aa0000",
 ]
-ColorEnter="#00ff7f"
+ColorEmpty=""
+ColorEnter="#00aaff"
 ColorExit="#00ff00"
 ColorBlock="#000000"
 ColorSearchPos="#aaffff"
 SpecialColors=[ColorEnter,ColorExit,ColorBlock]
+
+ColorEmptyIdx=GridColorList.index(ColorEmpty)
 
 SizeSelectList=[10,20,50,80,100,200,]
 

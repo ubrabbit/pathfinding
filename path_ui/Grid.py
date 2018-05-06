@@ -61,6 +61,7 @@ class CGrid(object):
             self.m_PosEntrance=pos
         if color==self.m_Parent.m_Interface.m_ExitColor:
             self.m_PosExport=pos
+
         if color==self.m_Parent.m_Interface.m_BlockColor:
             if not pos in self.m_BlockList:
                 self.m_BlockList.append( pos )

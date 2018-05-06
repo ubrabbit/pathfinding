@@ -20,6 +20,7 @@ namespace PathFind
         // create the node
         // _price - how much does it cost to pass this tile. less is better, but 0.0f is for non-walkable.
         // _gridX, _gridY - tile location in grid.
+        Node();
         Node(float _price, int _gridX, int _gridY);
         Node(const Node& b);
         ~Node();

@@ -7,30 +7,40 @@ namespace PathFind
 {
     using namespace std;
 
-    Grid::Grid(int width, int height, vector<float> tiles_costs)
+    Grid::Grid(int width, int height, std::vector<std::vector<float>> tiles_costs)
     {
         gridSizeX = width;
         gridSizeY = height;
 
+        nodes.resize(width);
+        for (int i = 0; i < width; i++)
+        {
+            nodes[i].resize(height);
+        }
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
             {
-                nodes.push_back( Node(tiles_costs[ x * width + y ], x, y) );
+                nodes[x][y] = Node(tiles_costs[x][y], x, y);
             }
         }
     }
 
-    Grid::Grid(int width, int height, vector<bool> walkable_tiles)
+    Grid::Grid(int width, int height, std::vector<std::vector<bool>> walkable_tiles)
     {
         gridSizeX = width;
         gridSizeY = height;
 
+        nodes.resize(width);
+        for (int i = 0; i < width; i++)
+        {
+            nodes[i].resize(height);
+        }
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
             {
-                nodes.push_back( Node(walkable_tiles[ x * width + y ] ? 1.0f : 0.0f, x, y) );
+                nodes[x][y] = Node(walkable_tiles[x][y], x, y);
             }
         }
     }
@@ -44,7 +54,7 @@ namespace PathFind
 
     Grid::~Grid()
     {
-        nodes.clear();
+        //nodes.clear();
     }
 
     list<Node> Grid::GetNeighbours(Node node)
@@ -63,7 +73,7 @@ namespace PathFind
 
                 if (checkX >= 0 && checkX < gridSizeX && checkY >= 0 && checkY < gridSizeY)
                 {
-                    neighbours.push_back( nodes[ checkX * gridSizeX + checkY ] );
+                    neighbours.push_back( nodes[checkX][checkY] );
                 }
             }
         }
@@ -73,7 +83,7 @@ namespace PathFind
 
     Node Grid::GetNode(int x, int y)
     {
-        return nodes[ x * gridSizeX + y ];
+        return nodes[x][y];
     }
 
     bool Grid::SetNodeCost(int x, int y, int cost, bool walkable)
@@ -82,29 +92,29 @@ namespace PathFind
         if( y >= gridSizeY ) return false;
 
         //cout<<"SetNodeCost:  "<<x<<","<<y<<"  "<<cost<<" "<<walkable<<endl;
-        nodes[ x * gridSizeX + y ].penalty = (float)cost;
-        nodes[ x * gridSizeX + y ].walkable = walkable;
+        nodes[x][y].penalty = (float)cost;
+        nodes[x][y].walkable = walkable;
         return true;
     }
 
     void Grid::DebugPrint()
     {
         cout<<">>>>>>>>>>>>>>>>>>> costs: "<<endl;
-        for(int i=0; i<gridSizeX; i++)
+        for(int y=0; y<gridSizeY; y++)
         {
-            for(int j=0; j<gridSizeY; j++)
+            for(int x=0; x<gridSizeX; x++)
             {
-                Node node = nodes[i * gridSizeX + j];
+                Node node = nodes[x][y];
                 cout<<node.penalty<<"\t";
             }
             cout<<endl;
         }
         cout<<">>>>>>>>>>>>>>>>>>> walkable: "<<endl;
-        for(int i=0; i<gridSizeX; i++)
+        for(int y=0; y<gridSizeY; y++)
         {
-            for(int j=0; j<gridSizeY; j++)
+            for(int x=0; x<gridSizeX; x++)
             {
-                Node node = nodes[i * gridSizeX + j];
+                Node node = nodes[x][y];
                 cout<<node.walkable<<"\t";
             }
             cout<<endl;

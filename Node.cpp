@@ -2,6 +2,17 @@
 
 namespace PathFind
 {
+    Node::Node()
+    {
+        gCost = 0;
+        hCost = 0;
+        walkable = false;
+        penalty = 0.0f;
+        gridX = 0;
+        gridY = 0;
+        parent = nullptr;
+    }
+
     Node::Node(float _price, int _gridX, int _gridY)
     {
         gCost = 0;

@@ -364,6 +364,7 @@ class CInterface(object):
         self.m_RowCnt=iTotalRow
         self.m_ColCnt=iTotalCol
 
+        self.tableWidget.clear()
         self.tableWidget.setColumnCount(iTotalCol)
         self.tableWidget.setRowCount(iTotalRow)
 
@@ -381,18 +382,18 @@ class CInterface(object):
 
     def TableCellClicked(self,sFlag,row,column):
         print("TableCellClicked  ",sFlag,row,column)
-        self.SetTableCellColor(row,column,self.m_CurSelectColor)
+        self.SetTableCellColor(row,column,int(self.m_CurSelectColor))
 
     def SetTableCellColor(self,row,column,idx):
         pos=(row,column)
         if idx==self.m_EntranceColor:
             if self.m_Parent.m_Grid.m_PosEntrance and pos!=self.m_Parent.m_Grid.m_PosEntrance:
                 i,j=self.m_Parent.m_Grid.m_PosEntrance
-                self.SetTableCellColor(i,j,0)
+                self.SetTableCellColor(i,j,ColorEmptyIdx)
         if idx==self.m_ExitColor:
             if self.m_Parent.m_Grid.m_PosExport and pos!=self.m_Parent.m_Grid.m_PosExport:
                 i,j=self.m_Parent.m_Grid.m_PosExport
-                self.SetTableCellColor(i,j,0)
+                self.SetTableCellColor(i,j,ColorEmptyIdx)
 
         if not self.m_Parent.m_Grid.SetPosColor((row,column),idx):
             QMessageBox.information(self.m_Parent,"",self.m_Parent.tr("设置颜色失败"))

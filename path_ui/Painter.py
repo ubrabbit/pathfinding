@@ -170,10 +170,9 @@ class CPainter(QtWidgets.QWidget):
             j=ilen1/10
             while(posList and j>=0):
                 j-=1
-                x,y,cost=posList.pop(0)
-                pos=(x,y)
+                row,col,cost=posList.pop(0)
+                pos=(row,col)
                 iColor=self.m_Grid.GetPosColor(pos)
-                row,col=pos
                 if not iColor:
                     continue
                 sColor=GridColorList[iColor]
@@ -187,11 +186,24 @@ class CPainter(QtWidgets.QWidget):
                 sColor=ColorBlock
                 self.SetColor(row,col,sColor)
                 self.m_ColorBackup[pos]=sColor
+        self.progressDialog.cancel()
+
+    #把 (row,col) 格式显示的格子转换成 (x,y) 格式的坐标系
+    def FormatMapPos(self, posSource):
+        if isinstance(posSource, tuple) and len(posSource) == 2:
+            row,col = posSource
+            return (col,row)
+        posList = []
+        for pos in posSource:
+            pos1 = list(pos)
+            pos1[1], pos1[0] = pos1[0], pos1[1]
+            posList.append( tuple( pos1 ) )
+        return posList
 
     def RegistMap(self):
-        posList=self.m_Grid.GetPosList()
-        blockList=self.m_Grid.GetBlockList()
-        print("CreateMap:  ",self.m_Row,self.m_Col)
+        posList = self.FormatMapPos(self.m_Grid.GetPosList())
+        blockList = self.FormatMapPos(self.m_Grid.GetBlockList())
+        print("CreateMap:  %s * %s"%(self.m_Col,self.m_Row))
         print("posList:  ",posList)
         print("blockList:  ",blockList)
         try:
@@ -221,7 +233,9 @@ class CPainter(QtWidgets.QWidget):
         try:
             totalCost = 0
             for i in range(100):
-                iCost, pTuple=c_path.SeekPath( self.m_Grid.m_PosEntrance, self.m_Grid.m_PosExport )
+                posEnter = self.FormatMapPos(self.m_Grid.m_PosEntrance)
+                posExit = self.FormatMapPos(self.m_Grid.m_PosExport)
+                iCost, pTuple=c_path.SeekPath( posEnter, posExit )
                 print(">>>> Cost  ",iCost)
                 totalCost+=iCost
         except Exception as err:
@@ -257,7 +271,7 @@ class CPainter(QtWidgets.QWidget):
 
         if len(self.m_PassList)<=0:
             return 0
-        row,col=self.m_PassList.pop(-1)
+        col,row=self.m_PassList.pop(-1)
         self.m_PathList.insert(0,(row,col))
 
         sColor=self.m_ColorBackup.get( (row,col), "" )
@@ -269,7 +283,7 @@ class CPainter(QtWidgets.QWidget):
             return 0
         if not self.m_PathList:
             return 0
-        row,col=self.m_PathList.pop(0)
+        col,row=self.m_PathList.pop(0)
         self.m_PassList.append( (row,col) )
         self.SetColor(row,col,self.m_Path_Color)
         return 1

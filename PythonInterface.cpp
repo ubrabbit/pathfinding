@@ -39,10 +39,15 @@ namespace PathFind
             int size_pos = PyList_Size(posList);
             assert( (width*height == size_pos) );
 
-            vector<float> tiles_costs;
-            for(int i=0; i<size_pos; i++)
+            vector<vector<float>> tiles_costs;
+            tiles_costs.resize(width);
+            for(int i=0; i<width; i++)
             {
-                tiles_costs.push_back(0);
+                tiles_costs[i].resize( height );
+                for(int j=0; j<height; j++)
+                {
+                    tiles_costs[i][j] = 1.0f;
+                }
             }
             for(int i=0; i<size_pos; i++)
             {
@@ -51,7 +56,7 @@ namespace PathFind
                 int pos_x = PyLong_AsLong(PyTuple_GetItem(tmpPos,0));
                 int pos_y = PyLong_AsLong(PyTuple_GetItem(tmpPos,1));
                 long cost = PyLong_AsLong(PyTuple_GetItem(tmpPos,2));
-                tiles_costs[ pos_x*width + pos_y ] = (float)cost;
+                tiles_costs[pos_x][pos_y] = (float)cost;
                 Py_DECREF(tmpPos);
             }
             Grid* grid = new Grid(width, height, tiles_costs);
@@ -72,10 +77,15 @@ namespace PathFind
             cout<<"CreateMapByBlock: "<<width<<"  "<<height<<endl;
             int size_pos = PyList_Size(blockList);
 
-            vector<bool> tiles_walkable;
-            for(int i=0; i<size_pos; i++)
+            vector<vector<bool>> tiles_walkable;
+            tiles_walkable.resize(width);
+            for(int i=0; i<width; i++)
             {
-                tiles_walkable.push_back( true );
+                tiles_walkable[i].resize( height );
+                for(int j=0; j<height; j++)
+                {
+                    tiles_walkable[i][j] = true;
+                }
             }
             for(int i=0; i<size_pos; i++)
             {
@@ -83,7 +93,7 @@ namespace PathFind
                 Py_INCREF(tmpPos);
                 int pos_x = PyLong_AsLong(PyTuple_GetItem(tmpPos,0));
                 int pos_y = PyLong_AsLong(PyTuple_GetItem(tmpPos,1));
-                tiles_walkable[ pos_x*width + pos_y ] = false;
+                tiles_walkable[pos_x][pos_y] = false;
                 Py_DECREF(tmpPos);
             }
             Grid* grid = new Grid(width, height, tiles_walkable);
@@ -105,10 +115,15 @@ namespace PathFind
             int size_pos = PyList_Size(posList);
             assert( (width*height == size_pos) );
 
-            vector<float> tiles_costs;
-            for(int i=0; i<size_pos; i++)
+            vector<vector<float>> tiles_costs;
+            tiles_costs.resize(width);
+            for(int i=0; i<width; i++)
             {
-                tiles_costs.push_back(0);
+                tiles_costs[i].resize( height );
+                for(int j=0; j<height; j++)
+                {
+                    tiles_costs[i][j] = 1.0f;
+                }
             }
             for(int i=0; i<size_pos; i++)
             {
@@ -117,7 +132,7 @@ namespace PathFind
                 int pos_x = PyLong_AsLong(PyTuple_GetItem(tmpPos,0));
                 int pos_y = PyLong_AsLong(PyTuple_GetItem(tmpPos,1));
                 long cost = PyLong_AsLong(PyTuple_GetItem(tmpPos,2));
-                tiles_costs[ pos_x*width + pos_y ] = (float)cost;
+                tiles_costs[pos_x][pos_y] = (float)cost;
                 Py_DECREF(tmpPos);
             }
             Grid* grid = new Grid(width, height, tiles_costs);
