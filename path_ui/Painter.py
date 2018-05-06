@@ -23,6 +23,7 @@ class CPainter(QtWidgets.QWidget):
 
         self.m_Grid = grid
         self.m_Row,self.m_Col=self.m_Grid.m_Row, self.m_Grid.m_Col
+        print("self.m_Row,self.m_Col>>>>>>>>>>>>>>>>.   ",self.m_Row,self.m_Col)
 
         #剩余路径列表
         self.m_PathList=[]
@@ -145,8 +146,8 @@ class CPainter(QtWidgets.QWidget):
         self.progressDialog.setCancelButtonText(self.tr("取消"))
         self.progressDialog.setRange(0,10)
 
-        self.mapWidget.setColumnCount(self.m_Row)
-        self.mapWidget.setRowCount(self.m_Col)
+        self.mapWidget.setRowCount(self.m_Row)
+        self.mapWidget.setColumnCount(self.m_Col)
 
         iRowSize=max(15,min(20,self.m_WindowSize_Row/self.m_Row))
         iColSize=max(15,min(20,self.m_WindowSize_Col/self.m_Col))
@@ -194,7 +195,7 @@ class CPainter(QtWidgets.QWidget):
         print("posList:  ",posList)
         print("blockList:  ",blockList)
         try:
-            iret=c_path.CreateMap(self.m_Row,self.m_Col,posList,blockList)
+            iret=c_path.CreateMap(self.m_Col,self.m_Row,posList,blockList)
             assert(iret==1)
         except Exception as err:
             print("CreateMap error")
@@ -286,5 +287,5 @@ class CPainter(QtWidgets.QWidget):
     def MoveAllNext(self):
         self.MoveAll_timer.stop()
         if( self.MoveNextStep() ):
-            self.MoveAll_timer.start(100)
+            self.MoveAll_timer.start(5)
         self.update()
