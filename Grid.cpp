@@ -54,7 +54,7 @@ namespace PathFind
 
     Grid::~Grid()
     {
-        //nodes.clear();
+        nodes.clear();
     }
 
     list<Node> Grid::GetNeighbours(Node node)
