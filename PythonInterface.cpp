@@ -213,31 +213,6 @@ namespace PathFind
             return tuple_return;
         }
 
-        static PyObject* SeekPathDebug(PyObject *self, PyObject *args)
-        {
-            long execute_cnt;
-            PyObject *oEnter,*oExit,*SeekArgs;
-            PyArg_ParseTuple(args,"lOO", &execute_cnt, &oEnter, &oExit);
-            SeekArgs = PyTuple_New(2);
-            PyTuple_SetItem(SeekArgs,0,oEnter);
-            PyTuple_SetItem(SeekArgs,1,oExit);
-
-            clock_t startTime,endTime;
-            long cost = 0;
-            PyObject *tuple_return;
-            startTime = clock();
-            tuple_return = SeekPath(self, SeekArgs);
-            for(int i=0; i<execute_cnt-1; i++)
-            {
-                SeekPath(self, SeekArgs);
-            }
-            endTime = clock();
-            cost = (long)(((endTime - startTime)*1000.0) / CLOCKS_PER_SEC);
-            PyTuple_SetItem(tuple_return, 0, Py_BuildValue("l",cost));
-            Py_DECREF(SeekArgs);
-            return tuple_return;
-        }
-
         static PyMethodDef PathMethods[] = {
                 {"CreateMap", CreateMap, METH_VARARGS, "CreateMap"},
                 {"CreateMapByCost", CreateMapByCost, METH_VARARGS, "CreateMapByCost"},
@@ -245,7 +220,6 @@ namespace PathFind
                 {"DeleteMap", DeleteMap, METH_VARARGS, "DeleteMap"},
                 {"SetGridCost", SetGridCost, METH_VARARGS, "SetGridCost"},
                 {"SeekPath", SeekPath, METH_VARARGS, "SeekPath"},
-                {"SeekPathDebug", SeekPathDebug, METH_VARARGS, "SeekPathDebug"},
                 {NULL,NULL,0,NULL},
         };
 

@@ -218,8 +218,11 @@ class CPainter(QtWidgets.QWidget):
             QtWidgets.QMessageBox.information(self,"无结果",self.tr("无效的起点与终点"))
             return
         try:
-            iCost,pTuple=c_path.SeekPath( self.m_Grid.m_PosEntrance, self.m_Grid.m_PosExport )
-            #iCost,pTuple=c_path.SeekPathDebug( 10, self.m_Grid.m_PosEntrance, self.m_Grid.m_PosExport )
+            totalCost = 0
+            for i in range(100):
+                iCost, pTuple=c_path.SeekPath( self.m_Grid.m_PosEntrance, self.m_Grid.m_PosExport )
+                print(">>>> Cost  ",iCost)
+                totalCost+=iCost
         except Exception as err:
             print("SeekPath error")
             debug_print()
@@ -227,7 +230,7 @@ class CPainter(QtWidgets.QWidget):
             return
 
         pList=list(pTuple)
-        print("iCost  ",iCost)
+        print("totalCost  ",totalCost)
         print("pTuple  ",pTuple)
 
         if not pList:
@@ -238,7 +241,7 @@ class CPainter(QtWidgets.QWidget):
                 return
             QtWidgets.QMessageBox.information(self,"无结果",self.tr("入口到出口无可达路径"))
             return
-        self.costLabel.setText("%s"%iCost )
+        self.costLabel.setText("%s"%totalCost )
 
         self.m_PathList=[]
         while (pList):
