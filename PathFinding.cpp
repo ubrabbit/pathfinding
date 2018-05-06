@@ -29,87 +29,87 @@ namespace PathFind
 
     list<Point> Pathfinding::_ImpFindPath(Grid grid, Point startPos, Point targetPos)
     {
-            Node startNode = grid.GetNode(startPos.x, startPos.y);
-            Node targetNode = grid.GetNode(targetPos.x, targetPos.y);
+        Node startNode = grid.GetNode(startPos.x, startPos.y);
+        Node targetNode = grid.GetNode(targetPos.x, targetPos.y);
 
-            list<Node> openSet;
+        list<Node> openSet;
 
-            int closedSet[grid.gridSizeX][grid.gridSizeY] = {0};
-            Node parentSet[grid.gridSizeX][grid.gridSizeY];
-            Node emptyNode = Node();
-            for(int i=0; i<grid.gridSizeX; i++)
+        int closedSet[grid.gridSizeX][grid.gridSizeY] = {0};
+        Node parentSet[grid.gridSizeX][grid.gridSizeY];
+        Node emptyNode = Node();
+        for(int i=0; i<grid.gridSizeX; i++)
+        {
+            for(int j=0; j<grid.gridSizeY; j++)
             {
-                for(int j=0; j<grid.gridSizeY; j++)
+                closedSet[i][j] = 0;
+                parentSet[i][j] = emptyNode;
+            }
+        }
+
+        bool is_find = false;
+        openSet.push_back( startNode );
+        while (openSet.size() > 0)
+        {
+            list<Node>::iterator iterNode = openSet.begin();
+            Node currentNode = *iterNode;
+
+            for( list<Node>::iterator iter=iterNode; iter!=openSet.end(); iter++ )
+            {
+                Node tmpNode = *iter;
+                if ( tmpNode.fCost() < currentNode.fCost() || (tmpNode.fCost() == currentNode.fCost() && tmpNode.hCost < currentNode.hCost) )
                 {
-                    closedSet[i][j] = 0;
-                    parentSet[i][j] = emptyNode;
+                    iterNode = iter;
+                    currentNode = tmpNode;
                 }
             }
+            openSet.erase( iterNode );
+            closedSet[currentNode.gridX][currentNode.gridY] = 1;
 
-            bool is_find = false;
-            openSet.push_back( startNode );
-            while (openSet.size() > 0)
+            if (currentNode == targetNode)
             {
-                list<Node>::iterator iterNode = openSet.begin();
-                Node currentNode = *iterNode;
+                targetNode = currentNode;
+                is_find = true;
+                break;
+            }
 
-                for( list<Node>::iterator iter=iterNode; iter!=openSet.end(); iter++ )
+            list<Node> neighbour_set = grid.GetNeighbours(currentNode);
+            for( list<Node>::iterator iter=neighbour_set.begin(); iter!=neighbour_set.end(); iter++ )
+            {
+                Node neighbour = *iter;
+                int x = neighbour.gridX;
+                int y = neighbour.gridY;
+                if (!neighbour.walkable || (closedSet[x][y]==1) )
                 {
-                    Node tmpNode = *iter;
-                    if ( tmpNode.fCost() < currentNode.fCost() || (tmpNode.fCost() == currentNode.fCost() && tmpNode.hCost < currentNode.hCost) )
-                    {
-                        iterNode = iter;
-                        currentNode = tmpNode;
-                    }
-                }
-                openSet.erase( iterNode );
-                closedSet[currentNode.gridX][currentNode.gridY] = 1;
-
-                if (currentNode == targetNode)
-                {
-                    targetNode = currentNode;
-                    is_find = true;
-                    break;
+                    continue;
                 }
 
-                list<Node> neighbour_set = grid.GetNeighbours(currentNode);
-                for( list<Node>::iterator iter=neighbour_set.begin(); iter!=neighbour_set.end(); iter++ )
+                int newMovementCostToNeighbour = currentNode.gCost + GetDistance(currentNode, neighbour) * (int)(10.0f * neighbour.penalty);
+                if ( (newMovementCostToNeighbour < neighbour.gCost) || (parentSet[x][y] == emptyNode) )
                 {
-                    Node neighbour = *iter;
-                    int x = neighbour.gridX;
-                    int y = neighbour.gridY;
-                    if (!neighbour.walkable || (closedSet[x][y]==1) )
-                    {
-                        continue;
-                    }
+                    neighbour.gCost = newMovementCostToNeighbour;
+                    neighbour.hCost = GetDistance(neighbour, targetNode);
 
-                    int newMovementCostToNeighbour = currentNode.gCost + GetDistance(currentNode, neighbour) * (int)(10.0f * neighbour.penalty);
-                    if ( (newMovementCostToNeighbour < neighbour.gCost) || (parentSet[x][y] == emptyNode) )
+                    if ( parentSet[x][y] == emptyNode )
                     {
-                        neighbour.gCost = newMovementCostToNeighbour;
-                        neighbour.hCost = GetDistance(neighbour, targetNode);
-
-                        if ( parentSet[x][y] == emptyNode )
-                        {
-                            openSet.push_back(neighbour);
-                            parentSet[x][y] = currentNode;
-                        }
+                        openSet.push_back(neighbour);
+                        parentSet[x][y] = currentNode;
                     }
                 }
             }
+        }
 
-            list<Point> pointList;
-            if ( is_find )
+        list<Point> pointList;
+        if ( is_find )
+        {
+            Node tmpNode = targetNode;
+            while (tmpNode != startNode)
             {
-                Node tmpNode = targetNode;
-                while (tmpNode != startNode)
-                {
-                    pointList.push_back( Point(tmpNode.gridX, tmpNode.gridY) );
-                    tmpNode = parentSet[tmpNode.gridX][tmpNode.gridY];
-                }
-                pointList.reverse();
+                pointList.push_back( Point(tmpNode.gridX, tmpNode.gridY) );
+                tmpNode = parentSet[tmpNode.gridX][tmpNode.gridY];
             }
-            return pointList;
+            pointList.reverse();
+        }
+        return pointList;
     }
 
     int Pathfinding::GetDistance(Node nodeA, Node nodeB)
