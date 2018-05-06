@@ -8,9 +8,8 @@ namespace PathFind
         hCost = 0;
         walkable = false;
         penalty = 0.0f;
-        gridX = 0;
-        gridY = 0;
-        parent = nullptr;
+        gridX = -1;
+        gridY = -1;
     }
 
     Node::Node(float _price, int _gridX, int _gridY)
@@ -21,7 +20,6 @@ namespace PathFind
         penalty = _price;
         gridX = _gridX;
         gridY = _gridY;
-        parent = nullptr;
     }
 
     Node::Node(const Node& b)
@@ -30,13 +28,8 @@ namespace PathFind
         penalty = b.penalty;
         gridX = b.gridX;
         gridY = b.gridY;
-        parent = b.parent;
         gCost = b.gCost;
         hCost = b.hCost;
-    }
-
-    Node::~Node(){
-        parent = nullptr;
     }
 
     int Node::fCost()

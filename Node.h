@@ -15,7 +15,6 @@ namespace PathFind
         // calculated values while finding path
         int gCost;
         int hCost;
-        Node* parent;
 
         // create the node
         // _price - how much does it cost to pass this tile. less is better, but 0.0f is for non-walkable.
@@ -23,7 +22,6 @@ namespace PathFind
         Node();
         Node(float _price, int _gridX, int _gridY);
         Node(const Node& b);
-        ~Node();
 
         int fCost();
 
