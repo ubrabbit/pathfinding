@@ -509,12 +509,16 @@ class CInterface(object):
 def start():
     init_runpath()
 
-    app = QtWidgets.QApplication([])
-    window = CApp()
-    window.show()
-    app.installEventFilter(window)
-    sys.exit(app.exec_())
-
+    try:
+        app = QtWidgets.QApplication([])
+        window = CApp()
+        window.show()
+        app.installEventFilter(window)
+    except Exception as err:
+        print(err)
+        debug_print()
+    finally:
+        sys.exit(app.exec_())
 
 if __name__ == "__main__":
     start()

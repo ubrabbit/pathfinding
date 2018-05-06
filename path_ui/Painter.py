@@ -27,11 +27,6 @@ class CPainter(QtWidgets.QWidget):
 
         #剩余路径列表
         self.m_PathList=[]
-        self.m_PathList_Bak=[]
-        #已经经过的路径列表，初始为出口
-        self.m_PassList=[]
-
-        self.m_ColorBackup={}
 
         self.setWindowTitle(self.tr("显示窗口"))
 
@@ -55,9 +50,18 @@ class CPainter(QtWidgets.QWidget):
         mainLayout.setStretchFactor(leftLayout,19)
         mainLayout.setStretchFactor(rightLayout,1)
 
-        sList=[
-        ("开始","Paint_Start"),
-        ]
+        rightLayout.addStretch(1)
+
+        layout_runtime=QtWidgets.QHBoxLayout()
+        label1=QtWidgets.QLabel(self.tr("运行次数："))
+        self.m_ExecuteTimesEdit=QtWidgets.QLineEdit("1")
+        label1.setFont(QFont('微软雅黑',10))
+        self.m_ExecuteTimesEdit.setFont(QFont('微软雅黑',10))
+        layout_runtime.addWidget(label1)
+        layout_runtime.addWidget(self.m_ExecuteTimesEdit)
+        rightLayout.addLayout(layout_runtime)
+
+        sList=[ ("开始","PaintStart"), ("重新开始","PaintRestart")]
         oList=[]
         for sName,sKey in sList:
             oButton=QtWidgets.QPushButton(self.tr(sName))
@@ -65,17 +69,16 @@ class CPainter(QtWidgets.QWidget):
             oButton.clicked.connect(func)
             oList.append(oButton)
             setattr(self,"m_Button_%s"%sKey,oButton)
-            if sKey!="Paint_Start":
+            if sKey!="PaintStart":
                 oButton.setEnabled(False)
 
-        rightLayout.addStretch(1)
         for oButton in oList:
             rightLayout.addWidget(oButton)
         for oButton in oList:
             rightLayout.setStretchFactor(oButton,1)
 
         layout_cost=QtWidgets.QHBoxLayout()
-        label1=QtWidgets.QLabel(self.tr("c层寻路开销："))
+        label1=QtWidgets.QLabel(self.tr("C++层寻路开销："))
         label2=QtWidgets.QLabel(self.tr("0"))
         label3=QtWidgets.QLabel(self.tr(" ms"))
         self.costLabel=label2
@@ -120,8 +123,16 @@ class CPainter(QtWidgets.QWidget):
 
     def OnButtonClicked(self,sFlag):
         print("OnButtonClicked ",sFlag)
-        if sFlag=="Paint_Start":
-            self.MoveStart()
+        try:
+            if sFlag=="PaintStart":
+                self.MoveStart()
+            elif sFlag=="PaintRestart":
+                self.MoveReStart()
+        except Exception as err:
+            msg = "Execute %s Failure!!"%sFlag
+            QtWidgets.QMessageBox.warning(self,"无结果",self.tr(msg))
+            print(msg)
+            debug_print()
 
     def PaintMap(self):
         self.mapWidget=QtWidgets.QTableWidget(self)
@@ -170,7 +181,6 @@ class CPainter(QtWidgets.QWidget):
                     continue
                 sColor=GridColorList[iColor]
                 self.SetColor(row,col,sColor)
-                self.m_ColorBackup[pos]=sColor
             j=ilen2/10
             while(blockList and j>=0):
                 j-=1
@@ -178,7 +188,6 @@ class CPainter(QtWidgets.QWidget):
                 row,col=pos
                 sColor=ColorBlock
                 self.SetColor(row,col,sColor)
-                self.m_ColorBackup[pos]=sColor
         self.progressDialog.cancel()
 
     #把 (row,col) 格式显示的格子转换成 (x,y) 格式的坐标系
@@ -214,7 +223,8 @@ class CPainter(QtWidgets.QWidget):
 
     def MoveStart(self):
         self.m_Start=1
-        self.m_Button_Paint_Start.setEnabled(False)
+        self.m_Button_PaintStart.setEnabled(False)
+        self.m_Button_PaintRestart.setEnabled(True)
 
         self.MoveAll_timer.stop()
         if not self.m_Grid.m_PosEntrance or not self.m_Grid.m_PosExport:
@@ -222,7 +232,13 @@ class CPainter(QtWidgets.QWidget):
             return
         try:
             totalCost = 0
-            for i in range(100):
+            totalRun = self.m_ExecuteTimesEdit.text()
+            print("totalRun is ",totalRun)
+            if not totalRun or not totalRun.isdigit() or int(totalRun)<=0:
+                QtWidgets.QMessageBox.information(self,"无结果",self.tr("输入的运行次数非>=1的整数"))
+                return
+            totalRun = int(totalRun)
+            for i in range(totalRun):
                 posEnter = self.FormatMapPos(self.m_Grid.m_PosEntrance)
                 posExit = self.FormatMapPos(self.m_Grid.m_PosExport)
                 iCost, pTuple=c_path.SeekPath( posEnter, posExit )
@@ -253,28 +269,35 @@ class CPainter(QtWidgets.QWidget):
             i,j=pList.pop(0),pList.pop(0)
             self.m_PathList.append( (i,j) )
         self.pathLabel.setText("%s"%len(self.m_PathList) )
-        self.m_PathList_Bak=self.m_PathList[:]
         self.MoveAll()
 
-    def MoveNextStep(self):
-        if not getattr(self,"m_Start",0):
-            return 0
-        if not self.m_PathList:
-            return 0
-        col,row=self.m_PathList.pop(0)
-        self.m_PassList.append( (row,col) )
-        self.SetColor(row,col,self.m_Path_Color)
-        return 1
+    def MoveReStart(self):
+        self.m_PathList=[]
+        self.mapWidget.clear()
+        self.PaintTables()
+        self.MoveStart()
 
     def MoveAll(self):
         import time
         if not getattr(self,"m_Start",0):
             return
-        self.m_Button_Paint_Start.setEnabled(False)
+        self.m_Button_PaintStart.setEnabled(False)
+        self.m_Button_PaintRestart.setEnabled(False)
         self.MoveAllNext()
+        self.m_Button_PaintStart.setEnabled(False)
+        self.m_Button_PaintRestart.setEnabled(True)
 
     def MoveAllNext(self):
+        def MoveNextStep():
+            if not getattr(self,"m_Start",0):
+                return 0
+            if not self.m_PathList:
+                return 0
+            col,row=self.m_PathList.pop(0)
+            self.SetColor(row,col,self.m_Path_Color)
+            return 1
+        #end def
         self.MoveAll_timer.stop()
-        if( self.MoveNextStep() ):
+        if( MoveNextStep() ):
             self.MoveAll_timer.start(5)
         self.update()
