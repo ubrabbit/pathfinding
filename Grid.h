@@ -21,7 +21,7 @@ namespace PathFind
         *               0.0f = unwalkable tile.
         *               1.0f = normal tile.
         */
-        Grid(int width, int height, std::vector<std::vector<float>> tiles_costs);
+        Grid(int width, int height, std::vector< std::vector<float> > tiles_costs);
 
         /**
         * Create a new grid of just walkable / unwalkable.
@@ -29,7 +29,7 @@ namespace PathFind
         * height: grid height.
         * walkable_tiles: the tilemap. true for walkable, false for blocking.
         */
-        Grid(int width, int height, std::vector<std::vector<bool>> walkable_tiles);
+        Grid(int width, int height, std::vector< std::vector<bool> > walkable_tiles);
         Grid(const Grid& g);
 
         ~Grid();
@@ -39,8 +39,9 @@ namespace PathFind
         bool SetNodeCost(int x, int y, int cost, bool walkable);
 
         void DebugPrint();
+        void DebugPrintList(std::list<Node> nodeList);
 
     private:
-        std::vector<std::vector<Node>> nodes;
+        std::vector< std::vector<Node> > nodes;
     };
 }

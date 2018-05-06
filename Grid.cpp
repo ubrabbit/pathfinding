@@ -7,7 +7,7 @@ namespace PathFind
 {
     using namespace std;
 
-    Grid::Grid(int width, int height, std::vector<std::vector<float>> tiles_costs)
+    Grid::Grid(int width, int height, std::vector< std::vector<float> > tiles_costs)
     {
         gridSizeX = width;
         gridSizeY = height;
@@ -26,7 +26,7 @@ namespace PathFind
         }
     }
 
-    Grid::Grid(int width, int height, std::vector<std::vector<bool>> walkable_tiles)
+    Grid::Grid(int width, int height, std::vector< std::vector<bool> > walkable_tiles)
     {
         gridSizeX = width;
         gridSizeY = height;
@@ -59,8 +59,8 @@ namespace PathFind
 
     list<Node> Grid::GetNeighbours(Node node)
     {
+        //cout<<">>>>>>>>>>>>>>>>>>>>    GetNeighbours:  ("<<node.gridX<<","<<node.gridY<<")"<<endl;
         list<Node> neighbours;
-
         for (int x = -1; x <= 1; x++)
         {
             for (int y = -1; y <= 1; y++)
@@ -77,7 +77,7 @@ namespace PathFind
                 }
             }
         }
-
+        //DebugPrintList(neighbours);
         return neighbours;
     }
 
@@ -119,6 +119,16 @@ namespace PathFind
             }
             cout<<endl;
         }
+    }
+
+    void Grid::DebugPrintList(list<Node> nodeList)
+    {
+        for (list<Node>::iterator iter=nodeList.begin(); iter!=nodeList.end(); iter++)
+        {
+            Node tmp = *iter;
+            cout<<"\t\t  :  ("<<tmp.gridX<<","<<tmp.gridY<<")"<<endl;
+        }
+
     }
 
 }

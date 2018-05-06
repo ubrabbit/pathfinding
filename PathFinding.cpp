@@ -41,6 +41,14 @@ namespace PathFind
 
             int closedSet[grid.gridSizeX][grid.gridSizeY] = {0};
             int historySet[grid.gridSizeX][grid.gridSizeY] = {0};
+            for(int i=0; i<grid.gridSizeX; i++)
+            {
+                for(int j=0; j<grid.gridSizeY; j++)
+                {
+                    closedSet[i][j] = 0;
+                    historySet[i][j] = 0;
+                }
+            }
 
             bool is_find = false;
             openSet.push_back( startNode );
@@ -61,6 +69,7 @@ namespace PathFind
                 openSet.erase( iterNode );
                 closedSet[currentNode.gridX][currentNode.gridY] = 1;
 
+                //cout<<"currentNode:   "<<currentNode.gridX<<","<<currentNode.gridY<<endl;
                 if (currentNode == targetNode)
                 {
                     targetNode = currentNode;
@@ -76,10 +85,12 @@ namespace PathFind
                     int y = neighbour.gridY;
                     if (!neighbour.walkable || (closedSet[x][y]==1) )
                     {
+                        //cout<<"neighbour00:   "<<x<<","<<y<<"   : "<<closedSet[x][y]<<"   :  "<<neighbour.walkable<<endl;
                         continue;
                     }
 
                     int newMovementCostToNeighbour = currentNode.gCost + GetDistance(currentNode, neighbour) * (int)(10.0f * neighbour.penalty);
+                    //cout<<"neighbour11:   "<<x<<","<<y<<"   : "<<newMovementCostToNeighbour<<"   :  "<<neighbour.gCost<<": "<<historySet[x][y]<<endl;
                     if (newMovementCostToNeighbour < neighbour.gCost || historySet[x][y]==0 )
                     {
                         Node* copyNode = new Node(currentNode);
@@ -89,6 +100,7 @@ namespace PathFind
                         neighbour.hCost = GetDistance(neighbour, targetNode);
                         neighbour.parent = copyNode;
 
+                        //cout<<"neighbour22:   "<<x<<","<<y<<"   : "<<historySet[x][y]<<endl;
                         if (historySet[x][y]==0)
                         {
                             openSet.push_back(neighbour);

@@ -39,7 +39,7 @@ namespace PathFind
             int size_pos = PyList_Size(posList);
             assert( (width*height == size_pos) );
 
-            vector<vector<float>> tiles_costs;
+            vector< vector<float> > tiles_costs;
             tiles_costs.resize(width);
             for(int i=0; i<width; i++)
             {
@@ -77,7 +77,7 @@ namespace PathFind
             cout<<"CreateMapByBlock: "<<width<<"  "<<height<<endl;
             int size_pos = PyList_Size(blockList);
 
-            vector<vector<bool>> tiles_walkable;
+            vector< vector<bool> > tiles_walkable;
             tiles_walkable.resize(width);
             for(int i=0; i<width; i++)
             {
@@ -115,7 +115,7 @@ namespace PathFind
             int size_pos = PyList_Size(posList);
             assert( (width*height == size_pos) );
 
-            vector<vector<float>> tiles_costs;
+            vector< vector<float> > tiles_costs;
             tiles_costs.resize(width);
             for(int i=0; i<width; i++)
             {
@@ -199,6 +199,7 @@ namespace PathFind
             enter_y=PyLong_AsLong(PyTuple_GetItem(oEnter,1));
             exit_x=PyLong_AsLong(PyTuple_GetItem(oExit,0));
             exit_y=PyLong_AsLong(PyTuple_GetItem(oExit,1));
+            //cout<<"SeekPath:  ("<<enter_x<<","<<enter_y<<")  ==>  ("<<exit_x<<","<<exit_y<<")"<<endl;
 
             clock_t startTime,endTime;
             long cost = 0;
