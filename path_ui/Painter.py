@@ -56,8 +56,7 @@ class CPainter(QtWidgets.QWidget):
         mainLayout.setStretchFactor(rightLayout,1)
 
         sList=[
-        ("开始","Paint_Start"),("上一步","Paint_Last"),
-        ("下一步","Paint_Next"),("全部执行","Paint_All"),
+        ("开始","Paint_Start"),
         ]
         oList=[]
         for sName,sKey in sList:
@@ -88,15 +87,15 @@ class CPainter(QtWidgets.QWidget):
         layout_cost.addWidget(label3)
         rightLayout.addLayout(layout_cost)
 
-        layout_search=QtWidgets.QHBoxLayout()
-        label1=QtWidgets.QLabel(self.tr("搜索格子数量："))
-        label2=QtWidgets.QLabel(self.tr("0"))
-        self.searchLabel=label2
-        label1.setFont(QFont('微软雅黑',10))
-        label2.setFont(QFont('微软雅黑',10))
-        layout_search.addWidget(label1)
-        layout_search.addWidget(label2)
-        rightLayout.addLayout(layout_search)
+        #layout_search=QtWidgets.QHBoxLayout()
+        #label1=QtWidgets.QLabel(self.tr("搜索格子数量："))
+        #label2=QtWidgets.QLabel(self.tr("0"))
+        #self.searchLabel=label2
+        #label1.setFont(QFont('微软雅黑',10))
+        #label2.setFont(QFont('微软雅黑',10))
+        #layout_search.addWidget(label1)
+        #layout_search.addWidget(label2)
+        #rightLayout.addLayout(layout_search)
 
         layout_path=QtWidgets.QHBoxLayout()
         label1=QtWidgets.QLabel(self.tr("路径经过的格子数："))
@@ -123,12 +122,6 @@ class CPainter(QtWidgets.QWidget):
         print("OnButtonClicked ",sFlag)
         if sFlag=="Paint_Start":
             self.MoveStart()
-        elif sFlag=="Paint_Last":
-            self.MoveLastStep()
-        elif sFlag=="Paint_Next":
-            self.MoveNextStep()
-        elif sFlag=="Paint_All":
-            self.MoveAll()
 
     def PaintMap(self):
         self.mapWidget=QtWidgets.QTableWidget(self)
@@ -222,9 +215,6 @@ class CPainter(QtWidgets.QWidget):
     def MoveStart(self):
         self.m_Start=1
         self.m_Button_Paint_Start.setEnabled(False)
-        self.m_Button_Paint_Last.setEnabled(True)
-        self.m_Button_Paint_Next.setEnabled(True)
-        self.m_Button_Paint_All.setEnabled(True)
 
         self.MoveAll_timer.stop()
         if not self.m_Grid.m_PosEntrance or not self.m_Grid.m_PosExport:
@@ -264,19 +254,7 @@ class CPainter(QtWidgets.QWidget):
             self.m_PathList.append( (i,j) )
         self.pathLabel.setText("%s"%len(self.m_PathList) )
         self.m_PathList_Bak=self.m_PathList[:]
-
-    def MoveLastStep(self):
-        if not getattr(self,"m_Start",0):
-            return
-
-        if len(self.m_PassList)<=0:
-            return 0
-        col,row=self.m_PassList.pop(-1)
-        self.m_PathList.insert(0,(row,col))
-
-        sColor=self.m_ColorBackup.get( (row,col), "" )
-        self.SetColor(row,col,sColor)
-        return 1
+        self.MoveAll()
 
     def MoveNextStep(self):
         if not getattr(self,"m_Start",0):
@@ -293,9 +271,6 @@ class CPainter(QtWidgets.QWidget):
         if not getattr(self,"m_Start",0):
             return
         self.m_Button_Paint_Start.setEnabled(False)
-        self.m_Button_Paint_Last.setEnabled(False)
-        self.m_Button_Paint_Next.setEnabled(False)
-        self.m_Button_Paint_All.setEnabled(False)
         self.MoveAllNext()
 
     def MoveAllNext(self):
